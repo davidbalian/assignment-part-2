@@ -46,12 +46,13 @@ function casinos_shortcode($atts) {
     }
 
     $output .= '<h2 class="mb-4">' . esc_html($atts['title']) . '</h2>';
-    $output .= '<div class="table-responsive">';
-    $output .= '<table class="table table-hover">';
-    $output .= '<thead><tr>';
-    $output .= '<th>Casino</th>';
-    $output .= '<th class="d-none d-md-table-cell">' . esc_html(ucfirst(str_replace('_', ' ', $atts['second_col']))) . '</th>';
-    $output .= '<th>Action</th>';
+    $output .= '<div class="table-responsive" style="background:#f7f7f7; padding:1.5rem; border-radius:8px;">';
+    $output .= '<table class="table mb-0" style="background:#f7f7f7; border-collapse:separate; border-spacing:0;">';
+    $output .= '<thead>';
+    $output .= '<tr style="background:#18344a; color:#fff;">';
+    $output .= '<th style="font-weight:600; font-size:1.1em; padding:0.75em 1em;">Casino</th>';
+    $output .= '<th class="d-none d-md-table-cell" style="font-weight:600; font-size:1.1em; padding:0.75em 1em;">' . esc_html(ucfirst(str_replace('_', ' ', $atts['second_col']))) . '</th>';
+    $output .= '<th style="font-weight:600; font-size:1.1em; padding:0.75em 1em;"></th>';
     $output .= '</tr></thead><tbody>';
 
     foreach ($casinos as $casino) {
@@ -60,18 +61,18 @@ function casinos_shortcode($atts) {
         $rating = get_post_meta($casino->ID, 'rating_average', true);
         $second_col_value = get_post_meta($casino->ID, $atts['second_col'], true);
 
-        $output .= '<tr>';
-        $output .= '<td style="vertical-align:top; text-align:left;">';
+        $output .= '<tr style="background:#f7f7f7; border-bottom:4px solid #fff;">';
+        $output .= '<td style="vertical-align:top; text-align:left; padding:1.2em 1em;">';
         if ($logo) {
             $output .= '<a href="' . esc_url($official_site) . '" target="_blank">'
-                . '<span style="display:inline-block; aspect-ratio:3/2; max-height:124px; width:auto; overflow:hidden; vertical-align:top;">'
-                . preg_replace('/<img /', '<img style="height:124px; max-width:100%; object-fit:cover; aspect-ratio:3/2;" ', $logo)
+                . '<span style="display:inline-block; aspect-ratio:3/2; max-height:64px; width:auto; overflow:hidden; vertical-align:top;">'
+                . preg_replace('/<img /', '<img style="height:64px; max-width:100%; object-fit:cover; aspect-ratio:3/2; background:#fff; border-radius:4px;" ', $logo)
                 . '</span></a>';
         }
         if ($rating) {
             $rating_out_of_5 = $rating / 2;
             $output .= '<div class="rating mt-2" style="text-align:left;">';
-            $output .= '<div class="stars" style="font-size:1.3em; display:flex; gap:2px; justify-content:flex-start;">';
+            $output .= '<div class="stars" style="font-size:1.1em; display:flex; gap:2px; justify-content:flex-start;">';
             $full_stars = floor($rating_out_of_5);
             $partial = $rating_out_of_5 - $full_stars;
             for ($i = 0; $i < 5; $i++) {
@@ -87,16 +88,15 @@ function casinos_shortcode($atts) {
                 }
             }
             $output .= '</div>';
-            $output .= '<span class="rating-value" style="display:block; text-align:left;">' . number_format($rating_out_of_5, 1) . '/5</span>';
+            $output .= '<span class="rating-value" style="display:block; text-align:left; font-size:1em; color:#444;">' . number_format($rating_out_of_5, 2) . '/5</span>';
             $output .= '</div>';
         }
         $output .= '</td>';
-
-        $output .= '<td class="d-none d-md-table-cell">';
+        $output .= '<td class="d-none d-md-table-cell" style="vertical-align:middle; background:#f7f7f7; padding:1.2em 1em;">';
         if ($atts['second_col'] == 'games') {
             $games = get_post_meta($casino->ID, 'games', true);
             if (is_array($games)) {
-                $output .= '<ul class="list-unstyled">';
+                $output .= '<ul class="list-unstyled mb-0">';
                 foreach ($games as $game_id) {
                     $game = get_post($game_id);
                     if ($game) {
@@ -109,9 +109,8 @@ function casinos_shortcode($atts) {
             $output .= $second_col_value ? 'YES' : 'NO';
         }
         $output .= '</td>';
-
-        $output .= '<td>';
-        $output .= '<a href="' . esc_url($official_site) . '" class="btn btn-dark d-inline-flex align-items-center" target="_blank"><span style="display:flex;justify-content:center;align-items:center;margin-right:.4rem;">'
+        $output .= '<td style="vertical-align:middle; text-align:right; background:#f7f7f7; padding:1.2em 1em;">';
+        $output .= '<a href="' . esc_url($official_site) . '" class="btn btn-dark d-inline-flex align-items-center w-100 justify-content-center" target="_blank"><span style="display:flex;justify-content:center;align-items:center;margin-right:.4rem;">'
             . '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>'
             . '</span>Review</a>';
         $output .= '</td>';
