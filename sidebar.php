@@ -36,7 +36,7 @@
                         $highest_rated_args = array(
                             'post_type' => 'casino',
                             'posts_per_page' => 3,
-                            'meta_key' => 'rating_average',
+                            'meta_key' => 'total_rating',
                             'orderby' => 'meta_value_num',
                             'order' => 'DESC',
                         );
@@ -51,7 +51,7 @@
                                     <?php endif; ?>
                                     <div class="tabbed-widget-info">
                                         <a class="tabbed-widget-title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a><br>
-                                        <small class="tabbed-widget-date text-muted">Average Rating: <?php echo esc_html(get_post_meta(get_the_ID(), 'rating_average', true)); ?></small>
+                                        <small class="tabbed-widget-date text-muted">Total Rating: <?php echo esc_html(get_post_meta(get_the_ID(), 'total_rating', true)); ?></small>
                                     </div>
                                 </li>
                             <?php endwhile; wp_reset_postdata();

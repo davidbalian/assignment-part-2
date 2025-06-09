@@ -183,6 +183,7 @@ function save_casino_meta_box($post_id) {
         $average = $count > 0 ? $total / $count : 0;
         update_post_meta($post_id, 'rating', $ratings);
         update_post_meta($post_id, 'rating_average', $average);
+        update_post_meta($post_id, 'total_rating', number_format($average, 1));
     }
 }
 add_action('save_post_casino', 'save_casino_meta_box'); 
