@@ -32,9 +32,8 @@ function casinos_shortcode($atts) {
     $casinos = get_posts($args);
     $output = '';
 
-    if ($atts['template'] == '2') {
-        // Removed extra dropdown above the table
-    }
+    $unique_id = 'casino-shortcode-' . uniqid();
+    $output .= '<div id="' . esc_attr($unique_id) . '">';
 
     $output .= '<h2 class="mb-4">' . esc_html($atts['title']) . '</h2>';
     $output .= '<div class="table-responsive" style="background:#f7f7f7; padding:1.5rem; border-radius:8px;">';
@@ -45,8 +44,8 @@ function casinos_shortcode($atts) {
     if ($atts['template'] == '2') {
         $output .= '<th class="d-none d-md-table-cell" style="font-weight:600; font-size:1.1em; padding:0.75em 1em;">'
             . '<div style="display:flex;align-items:center;gap:0.5em;">'
-            . '<span id="dynamic-col-header">' . esc_html(ucfirst(str_replace('_', ' ', $atts['second_col']))) . '</span>'
-            . '<select class="form-select form-select-sm w-auto ms-2" id="casino-column-selector" style="min-width:160px;">'
+            . '<span class="dynamic-col-header">' . esc_html(ucfirst(str_replace('_', ' ', $atts['second_col']))) . '</span>'
+            . '<select class="form-select form-select-sm w-auto ms-2 casino-column-selector" style="min-width:160px;">'
             . '<option value="loyalty">Loyalty</option>'
             . '<option value="live_casino">Live Casino</option>'
             . '<option value="mobile_casino">Mobile Casino</option>'
@@ -66,8 +65,7 @@ function casinos_shortcode($atts) {
         $logo = get_the_post_thumbnail($casino->ID, 'medium', array('class' => 'img-fluid'));
         $official_site = get_post_meta($casino->ID, 'official_site', true);
         $rating = get_post_meta($casino->ID, 'rating_average', true);
-        $second_col_value = get_post_meta($casino->ID, $atts['second_col'], true);
-
+        
         $output .= '<tr style="background:#f7f7f7; border-bottom:4px solid #fff;">';
         $output .= '<td style="vertical-align:top; text-align:left; padding:1.2em 1em;">';
         if ($logo) {
@@ -136,32 +134,51 @@ function casinos_shortcode($atts) {
     if ($atts['template'] == '2') {
         $output .= '<script>
         document.addEventListener("DOMContentLoaded", function() {
-            var selector = document.getElementById("casino-column-selector");
+            var wrapper = document.getElementById("' . $unique_id . '");
+            if (!wrapper) return;
+
+            var selector = wrapper.querySelector(".casino-column-selector");
             if (selector) {
                 selector.addEventListener("change", function() {
                     var col = this.value;
-                    var th = document.getElementById("dynamic-col-header");
-                    if (th) th.textContent = col.replace(/_/g, " ").replace(/\b\w/g, function(l){return l.toUpperCase()});
+                    var th = wrapper.querySelector(".dynamic-col-header");
+                    if (th) th.textContent = col.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+
                     var xhr = new XMLHttpRequest();
                     xhr.open("POST", "' . admin_url('admin-ajax.php') . '");
                     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                     xhr.onload = function() {
                         if (xhr.status === 200) {
-                            var resp = JSON.parse(xhr.responseText);
-                            if (resp.success && resp.data && Array.isArray(resp.data.cells)) {
-                                var tds = document.querySelectorAll("td[data-col]");
-                                tds.forEach(function(td, i) {
-                                    td.innerHTML = resp.data.cells[i] || "";
-                                });
+                            try {
+                                var resp = JSON.parse(xhr.responseText);
+                                if (resp.success && resp.data && Array.isArray(resp.data.cells)) {
+                                    var tds = wrapper.querySelectorAll("td[data-col]");
+                                    tds.forEach(function(td, i) {
+                                        if (resp.data.cells[i] !== undefined) {
+                                            td.innerHTML = resp.data.cells[i];
+                                            td.setAttribute("data-col", col);
+                                        }
+                                    });
+                                }
+                            } catch (e) {
+                                console.error("Error parsing JSON response:", e);
+                                console.log("Response from server:", xhr.responseText);
                             }
+                        } else {
+                            console.error("Request failed. Status: " + xhr.status);
                         }
                     };
-                    xhr.send("action=casinos_update_column&column=" + encodeURIComponent(col));
+                    xhr.onerror = function() {
+                        console.error("Request error.");
+                    };
+                    xhr.send("action=casinos_update_column&column=" + encodeURIComponent(col) + "&post_ids=" + JSON.stringify([' . implode(',', wp_list_pluck($casinos, 'ID')) . ']));
                 });
             }
         });
         </script>';
     }
+    
+    $output .= '</div>';
 
     return $output;
 }
