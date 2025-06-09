@@ -293,21 +293,32 @@ function latest_casinos_shortcode($atts) {
         echo '</div>'; // end .row
 
         // Pagination
-        $big = 999999999;
-        echo '<div class="pagination mt-4">';
-        echo paginate_links( array(
-            'base'    => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
-            'format'  => '?paged=%#%',
-            'current' => max( 1, get_query_var('paged') ),
-            'total'   => $casinos_query->max_num_pages,
+        $links = paginate_links( array(
+            'base'      => str_replace( 999999999, '%#%', esc_url( get_pagenum_link( 999999999 ) ) ),
+            'format'    => '?paged=%#%',
+            'current'   => max( 1, get_query_var('paged') ),
+            'total'     => $casinos_query->max_num_pages,
             'prev_text' => __('&laquo; Previous'),
             'next_text' => __('Next &raquo;'),
-            'type'      => 'list',
+            'type'      => 'array',
         ) );
-        echo '</div>';
 
-    else :
-        echo '<p>No casinos found.</p>';
+        if ( ! empty( $links ) ) {
+            echo '<nav aria-label="Page navigation" class="mt-4">';
+            echo '<ul class="pagination">';
+            foreach ( $links as $link ) {
+                $li_class = 'page-item';
+                if ( strpos( $link, 'current' ) !== false ) {
+                    $li_class .= ' active';
+                }
+                echo '<li class="' . $li_class . '">';
+                echo str_replace( 'page-numbers', 'page-link', $link );
+                echo '</li>';
+            }
+            echo '</ul>';
+            echo '</nav>';
+        }
+
     endif;
 
     wp_reset_postdata();
