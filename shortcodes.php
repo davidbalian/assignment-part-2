@@ -224,3 +224,94 @@ function casinos_update_column_ajax() {
     }
     wp_send_json_success(['cells' => $cells]);
 } 
+
+/**
+ * Latest Casinos Shortcode
+ * 
+ * Usage: [latest_casinos]
+ * 
+ * @param array $atts Shortcode attributes
+ * @return string HTML output
+ */
+function latest_casinos_shortcode($atts) {
+    ob_start();
+
+    $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+    $args = array(
+        'post_type'      => 'casino',
+        'posts_per_page' => 6,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+        'paged'          => $paged,
+    );
+
+    $casinos_query = new WP_Query( $args );
+
+    if ( $casinos_query->have_posts() ) :
+        echo '<div class="row">';
+        while ( $casinos_query->have_posts() ) : $casinos_query->the_post();
+            ?>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <?php if ( has_post_thumbnail() ) : ?>
+                        <a href="<?php the_permalink(); ?>">
+                            <?php the_post_thumbnail('medium', ['class' => 'card-img-top', 'style' => 'height: 180px; object-fit: cover;']); ?>
+                        </a>
+                    <?php endif; ?>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title"><?php the_title(); ?></h5>
+                        <?php
+                        $total_rating = get_post_meta(get_the_ID(), 'total_rating', true);
+                        if ( $total_rating ) {
+                            $rating_out_of_5 = $total_rating / 2;
+                            echo '<div class="rating mb-2" style="text-align:left;">';
+                            echo '<div class="stars" style="font-size:1.2em; display:flex; gap:2px; justify-content:flex-start;">';
+                            $full_stars = floor($rating_out_of_5);
+                            $partial = $rating_out_of_5 - $full_stars;
+                            for ($i = 0; $i < 5; $i++) {
+                                if ($i < $full_stars) {
+                                    echo '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="#ffc107" xmlns="http://www.w3.org/2000/svg"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+                                } elseif ($i == $full_stars && $partial > 0) {
+                                    $percent = round($partial * 100);
+                                    echo '<span style="position:relative; display:inline-block; width:1em; height:1em;">';
+                                    echo '<svg width="1em" height="1em" viewBox="0 0 24 24" style="position:absolute;top:0;left:0;z-index:1;" fill="#ffc107" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="starGradShort' . get_the_ID() . $i . '" x1="0" x2="1" y1="0" y2="0"><stop offset="' . $percent . '%" stop-color="#ffc107"/><stop offset="' . $percent . '%" stop-color="#e4e5e9"/></linearGradient></defs><path fill="url(#starGradShort' . get_the_ID() . $i . ')" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+                                    echo '</span>';
+                                } else {
+                                    echo '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="#e4e5e9" xmlns="http://www.w3.org/2000/svg"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+                                }
+                            }
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                        ?>
+                        <a href="<?php the_permalink(); ?>" class="btn btn-primary mt-auto">View Casino</a>
+                    </div>
+                </div>
+            </div>
+            <?php
+        endwhile;
+        echo '</div>'; // end .row
+
+        // Pagination
+        $big = 999999999;
+        echo '<div class="pagination mt-4">';
+        echo paginate_links( array(
+            'base'    => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+            'format'  => '?paged=%#%',
+            'current' => max( 1, get_query_var('paged') ),
+            'total'   => $casinos_query->max_num_pages,
+            'prev_text' => __('&laquo; Previous'),
+            'next_text' => __('Next &raquo;'),
+            'type'      => 'list',
+        ) );
+        echo '</div>';
+
+    else :
+        echo '<p>No casinos found.</p>';
+    endif;
+
+    wp_reset_postdata();
+
+    return ob_get_clean();
+}
+add_shortcode('latest_casinos', 'latest_casinos_shortcode'); 
