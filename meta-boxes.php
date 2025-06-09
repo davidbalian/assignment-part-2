@@ -137,14 +137,33 @@ function render_casino_meta_box($post) {
         <script>
         document.addEventListener('DOMContentLoaded', function() {
             var totalRating = document.getElementById('total_rating');
+            var ratingInputs = document.querySelectorAll('.rating-component');
+            function updateTotalRating() {
+                var sum = 0, count = 0;
+                ratingInputs.forEach(function(input) {
+                    var val = parseFloat(input.value);
+                    if (!isNaN(val)) {
+                        sum += val;
+                        count++;
+                    }
+                });
+                if (count > 0) {
+                    totalRating.value = (sum / count).toFixed(1);
+                } else {
+                    totalRating.value = '';
+                }
+            }
             if (totalRating) {
                 totalRating.addEventListener('input', function() {
                     var value = this.value;
-                    document.querySelectorAll('.rating-component').forEach(function(input) {
+                    ratingInputs.forEach(function(input) {
                         input.value = value;
                     });
                 });
             }
+            ratingInputs.forEach(function(input) {
+                input.addEventListener('input', updateTotalRating);
+            });
         });
         </script>
     </div>
