@@ -23,26 +23,26 @@
             <div class="tabbed-widget-header">Casino Listings</div>
             <ul class="nav nav-tabs" id="casinoTabs" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="popular-tab" data-bs-toggle="tab" data-bs-target="#popular" type="button" role="tab">Popular</button>
+                    <button class="nav-link active" id="highest-rated-tab" data-bs-toggle="tab" data-bs-target="#highest-rated" type="button" role="tab">Highest Rated</button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="recent-tab" data-bs-toggle="tab" data-bs-target="#recent" type="button" role="tab">Recent</button>
                 </li>
             </ul>
             <div class="tab-content" id="casinoTabsContent">
-                <div class="tab-pane fade show active" id="popular" role="tabpanel" aria-labelledby="popular-tab">
+                <div class="tab-pane fade show active" id="highest-rated" role="tabpanel" aria-labelledby="highest-rated-tab">
                     <ul class="tabbed-widget-list">
                         <?php
-                        $popular_args = array(
+                        $highest_rated_args = array(
                             'post_type' => 'casino',
                             'posts_per_page' => 3,
                             'meta_key' => 'rating_average',
                             'orderby' => 'meta_value_num',
                             'order' => 'DESC',
                         );
-                        $popular_query = new WP_Query($popular_args);
-                        if ($popular_query->have_posts()) :
-                            while ($popular_query->have_posts()) : $popular_query->the_post(); ?>
+                        $highest_rated_query = new WP_Query($highest_rated_args);
+                        if ($highest_rated_query->have_posts()) :
+                            while ($highest_rated_query->have_posts()) : $highest_rated_query->the_post(); ?>
                                 <li class="tabbed-widget-list-item d-flex mb-3">
                                     <?php if (has_post_thumbnail()) : ?>
                                         <div class="tabbed-widget-thumb me-2">
@@ -51,12 +51,12 @@
                                     <?php endif; ?>
                                     <div class="tabbed-widget-info">
                                         <a class="tabbed-widget-title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a><br>
-                                        <small class="tabbed-widget-date text-muted">Rating: <?php echo esc_html(get_post_meta(get_the_ID(), 'rating_average', true)); ?></small>
+                                        <small class="tabbed-widget-date text-muted">Average Rating: <?php echo esc_html(get_post_meta(get_the_ID(), 'rating_average', true)); ?></small>
                                     </div>
                                 </li>
                             <?php endwhile; wp_reset_postdata();
                         else : ?>
-                            <li class="text-muted">No popular casinos found.</li>
+                            <li class="text-muted">No highly rated casinos found.</li>
                         <?php endif; ?>
                     </ul>
                 </div>
