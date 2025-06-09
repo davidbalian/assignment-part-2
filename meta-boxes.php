@@ -80,17 +80,17 @@ function render_casino_meta_box($post) {
             <div class="col-md-6">
                 <div class="mb-4">
                     <h6 class="mb-2">Features</h6>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="loyalty" id="loyalty" value="1" <?php checked($loyalty, '1'); ?>>
-                        <label class="form-check-label" for="loyalty">Loyalty Program</label>
+                    <div style="display: flex; align-items: center; gap: 0.5em; margin-bottom: 0.5em;">
+                        <input class="align-middle" type="checkbox" name="loyalty" id="loyalty" value="1" <?php checked($loyalty, '1'); ?>>
+                        <label class="align-middle" for="loyalty" style="margin-bottom: 0;">Loyalty Program</label>
                     </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="live_casino" id="live_casino" value="1" <?php checked($live_casino, '1'); ?>>
-                        <label class="form-check-label" for="live_casino">Live Casino</label>
+                    <div style="display: flex; align-items: center; gap: 0.5em; margin-bottom: 0.5em;">
+                        <input class="align-middle" type="checkbox" name="live_casino" id="live_casino" value="1" <?php checked($live_casino, '1'); ?>>
+                        <label class="align-middle" for="live_casino" style="margin-bottom: 0;">Live Casino</label>
                     </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="mobile_casino" id="mobile_casino" value="1" <?php checked($mobile_casino, '1'); ?>>
-                        <label class="form-check-label" for="mobile_casino">Mobile Casino</label>
+                    <div style="display: flex; align-items: center; gap: 0.5em; margin-bottom: 0.5em;">
+                        <input class="align-middle" type="checkbox" name="mobile_casino" id="mobile_casino" value="1" <?php checked($mobile_casino, '1'); ?>>
+                        <label class="align-middle" for="mobile_casino" style="margin-bottom: 0;">Mobile Casino</label>
                     </div>
                 </div>
                 <div class="mb-3">
