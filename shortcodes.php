@@ -24,9 +24,13 @@ function casinos_shortcode($atts) {
         'second_col' => 'loyalty'
     ), $atts);
 
+    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
     $args = array(
         'post_type' => 'casino',
-        'posts_per_page' => -1
+        'posts_per_page' => -1,
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'paged' => $paged
     );
 
     $casinos = get_posts($args);
@@ -40,12 +44,12 @@ function casinos_shortcode($atts) {
     $output .= '<table class="table mb-0" style="background:#f7f7f7; border-collapse:separate; border-spacing:0;">';
     $output .= '<thead>';
     $output .= '<tr style="background:#18344a; color:#fff;">';
-    $output .= '<th style="font-weight:600; font-size:1.1em; padding:0.75em 1em;">Casino</th>';
+    $output .= '<th style="font-weight:600; font-size:1.1em; padding:0.75em 1em; vertical-align: middle;">Casino</th>';
     if ($atts['template'] == '2') {
-        $output .= '<th class="d-none d-md-table-cell" style="font-weight:600; font-size:1.1em; padding:0.75em 1em;">'
+        $output .= '<th class="d-none d-md-table-cell" style="font-weight:600; font-size:1.1em; padding:0.75em 1em; vertical-align: middle;">'
             . '<div style="display:flex;align-items:center;gap:0.5em;">'
             . '<span class="dynamic-col-header">' . esc_html(ucfirst(str_replace('_', ' ', $atts['second_col']))) . '</span>'
-            . '<select class="form-select form-select-sm w-auto ms-2 casino-column-selector" style="min-width:160px;">'
+            . '<select class="form-select form-select-sm w-auto ms-2 casino-column-selector" style="min-width:160px; background-color: #34495e; color: #fff; border-color: #566f88;">'
             . '<option value="loyalty">Loyalty</option>'
             . '<option value="live_casino">Live Casino</option>'
             . '<option value="mobile_casino">Mobile Casino</option>'
@@ -56,9 +60,9 @@ function casinos_shortcode($atts) {
             . '</div>'
             . '</th>';
     } else {
-        $output .= '<th class="d-none d-md-table-cell" style="font-weight:600; font-size:1.1em; padding:0.75em 1em;">' . esc_html(ucfirst(str_replace('_', ' ', $atts['second_col']))) . '</th>';
+        $output .= '<th class="d-none d-md-table-cell" style="font-weight:600; font-size:1.1em; padding:0.75em 1em; vertical-align: middle;">' . esc_html(ucfirst(str_replace('_', ' ', $atts['second_col']))) . '</th>';
     }
-    $output .= '<th style="font-weight:600; font-size:1.1em; padding:0.75em 1em;"></th>';
+    $output .= '<th style="font-weight:600; font-size:1.1em; padding:0.75em 1em; vertical-align: middle;"></th>';
     $output .= '</tr></thead><tbody>';
 
     foreach ($casinos as $casino) {
@@ -99,10 +103,10 @@ function casinos_shortcode($atts) {
         $output .= '</td>';
         $output .= '<td class="d-none d-md-table-cell" style="vertical-align:middle; background:#f7f7f7; padding:1.2em 1em;" data-col="' . esc_attr($atts['second_col']) . '">';
         if ($atts['second_col'] == 'games') {
-            $games = get_post_meta($casino->ID, 'games', true);
-            if (is_array($games)) {
+            $games_list = get_post_meta($casino->ID, 'games', true);
+            if (is_array($games_list)) {
                 $output .= '<ul class="list-unstyled mb-0">';
-                foreach ($games as $game_id) {
+                foreach ($games_list as $game_id) {
                     $game = get_post($game_id);
                     if ($game) {
                         $output .= '<li>' . esc_html($game->post_title) . '</li>';
@@ -191,9 +195,13 @@ add_action('wp_ajax_casinos_update_column', 'casinos_update_column_ajax');
 add_action('wp_ajax_nopriv_casinos_update_column', 'casinos_update_column_ajax');
 function casinos_update_column_ajax() {
     $col = isset($_POST['column']) ? sanitize_text_field($_POST['column']) : '';
+    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
     $args = array(
         'post_type' => 'casino',
-        'posts_per_page' => -1
+        'posts_per_page' => -1,
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'paged' => $paged
     );
     $casinos = get_posts($args);
     $cells = array();
