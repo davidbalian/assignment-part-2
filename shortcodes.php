@@ -33,16 +33,7 @@ function casinos_shortcode($atts) {
     $output = '';
 
     if ($atts['template'] == '2') {
-        $output .= '<div class="casino-dropdown mb-3">';
-        $output .= '<select class="form-select" id="casino-column-selector">';
-        $output .= '<option value="loyalty">Loyalty</option>';
-        $output .= '<option value="live_casino">Live Casino</option>';
-        $output .= '<option value="mobile_casino">Mobile Casino</option>';
-        $output .= '<option value="year_of_establishment">Year of Establishment</option>';
-        $output .= '<option value="contact_email">Contact Email</option>';
-        $output .= '<option value="games">Games</option>';
-        $output .= '</select>';
-        $output .= '</div>';
+        // Removed extra dropdown above the table
     }
 
     $output .= '<h2 class="mb-4">' . esc_html($atts['title']) . '</h2>';
