@@ -71,7 +71,7 @@ function register_casino_post_type() {
         'show_ui'            => true,
         'show_in_menu'       => true,
         'query_var'          => true,
-        'rewrite'            => array('slug' => 'casino/%postname%'),
+        'rewrite'            => array('slug' => 'casino'),
         'capability_type'    => 'post',
         'supports'           => array('title', 'editor', 'thumbnail'),
         'menu_icon'          => 'dashicons-store',
