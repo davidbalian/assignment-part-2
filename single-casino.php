@@ -20,7 +20,7 @@ get_header();
                 
                 <?php if ( has_post_thumbnail() ) : ?>
                     <div class="post-thumbnail mb-4">
-                        <?php the_post_thumbnail('large', ['class' => 'img-fluid rounded', 'style' => 'max-height: 200px; width: 100%; object-fit: cover;']); ?>
+                        <?php the_post_thumbnail('large', ['class' => 'img-fluid rounded', 'style' => 'max-height: 200px; width: auto;']); ?>
                     </div>
                 <?php endif; ?>
 
