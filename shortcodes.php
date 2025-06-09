@@ -111,9 +111,16 @@ function casinos_shortcode($atts) {
                     }
                 }
                 $output .= '</ul>';
+            } else {
+                $output .= '';
             }
         } else {
-            $output .= $second_col_value ? 'YES' : 'NO';
+            $val = get_post_meta($casino->ID, $atts['second_col'], true);
+            if ($atts['second_col'] === 'contact_email' || $atts['second_col'] === 'year_of_establishment') {
+                $output .= esc_html($val);
+            } else {
+                $output .= $val ? 'YES' : 'NO';
+            }
         }
         $output .= '</td>';
         $output .= '<td style="vertical-align:middle; text-align:right; background:#f7f7f7; padding:1.2em 1em;">';
