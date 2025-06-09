@@ -57,64 +57,70 @@ function render_casino_meta_box($post) {
 
     ?>
     <div class="casino-meta-box">
-        <p>
-            <label for="official_site">Official Site URL:</label>
-            <input type="url" id="official_site" name="official_site" value="<?php echo esc_attr($official_site); ?>" class="form-control">
-        </p>
-        <p>
-            <label for="year_of_establishment">Year of Establishment:</label>
-            <input type="text" id="year_of_establishment" name="year_of_establishment" value="<?php echo esc_attr($year_established); ?>" class="form-control">
-        </p>
-        <p>
-            <label for="contact_email">Contact Email:</label>
-            <input type="email" id="contact_email" name="contact_email" value="<?php echo esc_attr($contact_email); ?>" class="form-control">
-        </p>
-        <p>
-            <label>
-                <input type="checkbox" name="loyalty" value="1" <?php checked($loyalty, '1'); ?>>
-                Loyalty Program
-            </label>
-        </p>
-        <p>
-            <label>
-                <input type="checkbox" name="live_casino" value="1" <?php checked($live_casino, '1'); ?>>
-                Live Casino
-            </label>
-        </p>
-        <p>
-            <label>
-                <input type="checkbox" name="mobile_casino" value="1" <?php checked($mobile_casino, '1'); ?>>
-                Mobile Casino
-            </label>
-        </p>
-        <p>
-            <label>Available Games:</label>
-            <?php
-            $all_games = get_posts(array('post_type' => 'game', 'posts_per_page' => -1));
-            if ($all_games) {
-                echo '<div class="games-checkbox-list">';
-                foreach ($all_games as $game) {
-                    $checked = is_array($games) && in_array($game->ID, $games) ? 'checked' : '';
-                    echo '<label class="d-block">';
-                    echo '<input type="checkbox" name="games[]" value="' . $game->ID . '" ' . $checked . '>';
-                    echo esc_html($game->post_title);
-                    echo '</label>';
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="official_site" class="form-label">Official Site URL:</label>
+                    <input type="url" id="official_site" name="official_site" value="<?php echo esc_attr($official_site); ?>" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="year_of_establishment" class="form-label">Year of Establishment:</label>
+                    <input type="text" id="year_of_establishment" name="year_of_establishment" value="<?php echo esc_attr($year_established); ?>" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="contact_email" class="form-label">Contact Email:</label>
+                    <input type="email" id="contact_email" name="contact_email" value="<?php echo esc_attr($contact_email); ?>" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="loyalty" id="loyalty" value="1" <?php checked($loyalty, '1'); ?>>
+                        <label class="form-check-label" for="loyalty">Loyalty Program</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="live_casino" id="live_casino" value="1" <?php checked($live_casino, '1'); ?>>
+                        <label class="form-check-label" for="live_casino">Live Casino</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="mobile_casino" id="mobile_casino" value="1" <?php checked($mobile_casino, '1'); ?>>
+                        <label class="form-check-label" for="mobile_casino">Mobile Casino</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Available Games:</label>
+                    <div class="row g-2">
+                        <?php
+                        $all_games = get_posts(array('post_type' => 'game', 'posts_per_page' => -1));
+                        if ($all_games) {
+                            foreach ($all_games as $game) {
+                                $checked = is_array($games) && in_array($game->ID, $games) ? 'checked' : '';
+                                echo '<div class="col-6 col-lg-4">';
+                                echo '<div class="form-check">';
+                                echo '<input class="form-check-input" type="checkbox" name="games[]" id="game_' . $game->ID . '" value="' . $game->ID . '" ' . $checked . '>';
+                                echo '<label class="form-check-label" for="game_' . $game->ID . '">' . esc_html($game->post_title) . '</label>';
+                                echo '</div>';
+                                echo '</div>';
+                            }
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="rating-fields mt-4 p-3 border rounded bg-light">
+            <h5 class="mb-3">Rating Components</h5>
+            <div class="row">
+                <?php
+                foreach ($rating_fields as $key => $label) {
+                    $value = isset($rating[$key]) ? $rating[$key] : '';
+                    echo '<div class="col-md-4 mb-3">';
+                    echo '<label for="rating_' . $key . '" class="form-label">' . $label . ':</label>';
+                    echo '<input type="number" id="rating_' . $key . '" name="rating[' . $key . ']" value="' . esc_attr($value) . '" min="1" max="10" step="0.1" class="form-control">';
+                    echo '</div>';
                 }
-                echo '</div>';
-            }
-            ?>
-        </p>
-        <div class="rating-fields">
-            <h4>Rating Components</h4>
-            <?php
-            foreach ($rating_fields as $key => $label) {
-                $value = isset($rating[$key]) ? $rating[$key] : '';
-                echo '<p>';
-                echo '<label for="rating_' . $key . '">' . $label . ':</label>';
-                echo '<input type="number" id="rating_' . $key . '" name="rating[' . $key . ']" value="' . esc_attr($value) . '" min="1" max="10" step="0.1" class="form-control">';
-                echo '</p>';
-            }
-            ?>
+                ?>
+            </div>
         </div>
     </div>
     <?php
