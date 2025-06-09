@@ -104,8 +104,28 @@ require get_template_directory() . '/meta-boxes.php';
 require get_template_directory() . '/shortcodes.php';
 require get_template_directory() . '/widgets.php';
 
-// Enqueue Bootstrap in admin area for meta box styling
-function custom_bootstrap_admin_enqueue() {
-    wp_enqueue_style('bootstrap-admin', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
+// Only enqueue Bootstrap in admin for the 'casino' post type
+function custom_bootstrap_admin_enqueue($hook) {
+    global $post_type;
+    if ($post_type === 'casino') {
+        wp_enqueue_style('bootstrap-admin', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
+    }
 }
 add_action('admin_enqueue_scripts', 'custom_bootstrap_admin_enqueue');
+
+// Fix WP title placeholder appearance when Bootstrap is loaded
+function fix_wp_title_placeholder_css() {
+    echo '<style>
+        #title, .editor-post-title__input {
+            padding: 3px 8px !important;
+            font-size: 2em !important;
+            line-height: 1.3em !important;
+            height: auto !important;
+        }
+        #title::placeholder, .editor-post-title__input::placeholder {
+            line-height: normal !important;
+        }
+    </style>';
+}
+add_action('admin_head-post-new.php', 'fix_wp_title_placeholder_css');
+add_action('admin_head-post.php', 'fix_wp_title_placeholder_css');
