@@ -69,8 +69,20 @@ function casinos_shortcode($atts) {
             $rating_out_of_5 = $rating / 2;
             $output .= '<div class="rating mt-2">';
             $output .= '<span class="rating-value">' . number_format($rating_out_of_5, 1) . '/5</span>';
-            $stars = round($rating_out_of_5);
-            $output .= '<div class="stars">' . str_repeat('★', $stars) . str_repeat('☆', 5 - $stars) . '</div>';
+            $full_stars = floor($rating_out_of_5);
+            $half_star = ($rating_out_of_5 - $full_stars) >= 0.25 && ($rating_out_of_5 - $full_stars) < 0.75 ? 1 : 0;
+            $empty_stars = 5 - $full_stars - $half_star;
+            $output .= '<div class="stars" style="font-size:1.3em; color:#ffc107; display:flex; gap:2px;">';
+            for ($i = 0; $i < $full_stars; $i++) {
+                $output .= '<span style="color:#ffc107;">&#9733;</span>';
+            }
+            if ($half_star) {
+                $output .= '<span style="color:#ffc107;">&#189;</span>';
+            }
+            for ($i = 0; $i < $empty_stars; $i++) {
+                $output .= '<span style="color:#e4e5e9;">&#9733;</span>';
+            }
+            $output .= '</div>';
             $output .= '</div>';
         }
         $output .= '</td>';
@@ -94,7 +106,7 @@ function casinos_shortcode($atts) {
         $output .= '</td>';
 
         $output .= '<td>';
-        $output .= '<a href="' . esc_url($official_site) . '" class="btn btn-primary" target="_blank">Review</a>';
+        $output .= '<a href="' . esc_url($official_site) . '" class="btn btn-primary" target="_blank"><span style="color:#ffc107; margin-right:0.4em;">&#9733;</span>Review</a>';
         $output .= '</td>';
         $output .= '</tr>';
     }
