@@ -51,7 +51,23 @@ function casinos_shortcode($atts) {
     $output .= '<thead>';
     $output .= '<tr style="background:#18344a; color:#fff;">';
     $output .= '<th style="font-weight:600; font-size:1.1em; padding:0.75em 1em;">Casino</th>';
-    $output .= '<th class="d-none d-md-table-cell" style="font-weight:600; font-size:1.1em; padding:0.75em 1em;">' . esc_html(ucfirst(str_replace('_', ' ', $atts['second_col']))) . '</th>';
+    if ($atts['template'] == '2') {
+        $output .= '<th class="d-none d-md-table-cell" style="font-weight:600; font-size:1.1em; padding:0.75em 1em;">'
+            . '<div style="display:flex;align-items:center;gap:0.5em;">'
+            . '<span id="dynamic-col-header">' . esc_html(ucfirst(str_replace('_', ' ', $atts['second_col']))) . '</span>'
+            . '<select class="form-select form-select-sm w-auto ms-2" id="casino-column-selector" style="min-width:160px;">'
+            . '<option value="loyalty">Loyalty</option>'
+            . '<option value="live_casino">Live Casino</option>'
+            . '<option value="mobile_casino">Mobile Casino</option>'
+            . '<option value="year_of_establishment">Year of Establishment</option>'
+            . '<option value="contact_email">Contact Email</option>'
+            . '<option value="games">Games</option>'
+            . '</select>'
+            . '</div>'
+            . '</th>';
+    } else {
+        $output .= '<th class="d-none d-md-table-cell" style="font-weight:600; font-size:1.1em; padding:0.75em 1em;">' . esc_html(ucfirst(str_replace('_', ' ', $atts['second_col']))) . '</th>';
+    }
     $output .= '<th style="font-weight:600; font-size:1.1em; padding:0.75em 1em;"></th>';
     $output .= '</tr></thead><tbody>';
 
@@ -92,7 +108,7 @@ function casinos_shortcode($atts) {
             $output .= '</div>';
         }
         $output .= '</td>';
-        $output .= '<td class="d-none d-md-table-cell" style="vertical-align:middle; background:#f7f7f7; padding:1.2em 1em;">';
+        $output .= '<td class="d-none d-md-table-cell" style="vertical-align:middle; background:#f7f7f7; padding:1.2em 1em;" data-col="' . esc_attr($atts['second_col']) . '">';
         if ($atts['second_col'] == 'games') {
             $games = get_post_meta($casino->ID, 'games', true);
             if (is_array($games)) {
@@ -121,28 +137,17 @@ function casinos_shortcode($atts) {
 
     if ($atts['template'] == '2') {
         $output .= '<script>
-            jQuery(document).ready(function($) {
-                $("#casino-column-selector").on("change", function() {
-                    var selected = $(this).val();
-                    $.ajax({
-                        url: ajaxurl,
-                        type: "POST",
-                        data: {
-                            action: "update_casino_column",
-                            column: selected,
-                            nonce: "' . wp_create_nonce('update_casino_column') . '"
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                $(".table th:nth-child(2)").text(response.data.title);
-                                $(".table td:nth-child(2)").each(function() {
-                                    $(this).html(response.data.content);
-                                });
-                            }
-                        }
-                    });
+        document.addEventListener("DOMContentLoaded", function() {
+            var selector = document.getElementById("casino-column-selector");
+            if (selector) {
+                selector.addEventListener("change", function() {
+                    var col = this.value;
+                    var th = document.getElementById("dynamic-col-header");
+                    if (th) th.textContent = col.replace(/_/g, " ").replace(/\b\w/g, function(l){return l.toUpperCase()});
+                    window.location.search = "?second_col=" + col;
                 });
-            });
+            }
+        });
         </script>';
     }
 
