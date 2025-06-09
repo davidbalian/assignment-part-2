@@ -440,7 +440,10 @@ function casinos_shortcode($atts) {
 }
 add_shortcode('casinos', 'casinos_shortcode');
 
-// Casino Listings Widget
+// Include shortcodes
+require get_template_directory() . '/shortcodes.php';
+
+// Register Casino Listings Widget
 class Casino_Listings_Widget extends WP_Widget {
     public function __construct() {
         parent::__construct(
