@@ -20,60 +20,73 @@
     <!-- Tabbed Content Widget: Recent & Popular -->
     <section class="widget tabbed-widget mb-4">
         <div>
-            <div class="tabbed-widget-header">Tabbed Content Widget</div>
-            <ul class="tabbed-widget-tabs" id="myTab" role="tablist">
-                <li class="tabbed-widget-tab" role="presentation">
-                    <button class="tabbed-widget-link active" id="recent-tab" data-bs-toggle="tab" data-bs-target="#recent" type="button" role="tab" aria-controls="recent" aria-selected="true">Recent</button>
+            <div class="tabbed-widget-header">Casino Listings</div>
+            <ul class="nav nav-tabs" id="casinoTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="popular-tab" data-bs-toggle="tab" data-bs-target="#popular" type="button" role="tab">Popular</button>
                 </li>
-                <li class="tabbed-widget-tab" role="presentation">
-                    <button class="tabbed-widget-link" id="popular-tab" data-bs-toggle="tab" data-bs-target="#popular" type="button" role="tab" aria-controls="popular" aria-selected="false">Popular</button>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="recent-tab" data-bs-toggle="tab" data-bs-target="#recent" type="button" role="tab">Recent</button>
                 </li>
             </ul>
-            <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="recent" role="tabpanel" aria-labelledby="recent-tab">
+            <div class="tab-content" id="casinoTabsContent">
+                <div class="tab-pane fade show active" id="popular" role="tabpanel" aria-labelledby="popular-tab">
                     <ul class="tabbed-widget-list">
                         <?php
-                        $recent_query = new WP_Query(array(
+                        $popular_args = array(
+                            'post_type' => 'casino',
                             'posts_per_page' => 3,
-                            'post_status' => 'publish',
-                        ));
-                        while ($recent_query->have_posts()) : $recent_query->the_post(); ?>
-                            <li class="tabbed-widget-list-item d-flex mb-3">
-                                <?php if (has_post_thumbnail()) : ?>
-                                    <div class="tabbed-widget-thumb me-2">
-                                        <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-fluid rounded')); ?></a>
+                            'meta_key' => 'rating_average',
+                            'orderby' => 'meta_value_num',
+                            'order' => 'DESC',
+                        );
+                        $popular_query = new WP_Query($popular_args);
+                        if ($popular_query->have_posts()) :
+                            while ($popular_query->have_posts()) : $popular_query->the_post(); ?>
+                                <li class="tabbed-widget-list-item d-flex mb-3">
+                                    <?php if (has_post_thumbnail()) : ?>
+                                        <div class="tabbed-widget-thumb me-2">
+                                            <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-fluid rounded')); ?></a>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="tabbed-widget-info">
+                                        <a class="tabbed-widget-title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a><br>
+                                        <small class="tabbed-widget-date text-muted">Rating: <?php echo esc_html(get_post_meta(get_the_ID(), 'rating_average', true)); ?></small>
                                     </div>
-                                <?php endif; ?>
-                                <div class="tabbed-widget-info">
-                                    <a class="tabbed-widget-title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a><br>
-                                    <small class="tabbed-widget-date text-muted"><?php echo get_the_date('F j, Y'); ?></small>
-                                </div>
-                            </li>
-                        <?php endwhile; wp_reset_postdata(); ?>
+                                </li>
+                            <?php endwhile; wp_reset_postdata();
+                        else : ?>
+                            <li class="text-muted">No popular casinos found.</li>
+                        <?php endif; ?>
                     </ul>
                 </div>
-                <div class="tab-pane fade" id="popular" role="tabpanel" aria-labelledby="popular-tab">
+                <div class="tab-pane fade" id="recent" role="tabpanel" aria-labelledby="recent-tab">
                     <ul class="tabbed-widget-list">
                         <?php
-                        $popular_query = new WP_Query(array(
+                        $recent_args = array(
+                            'post_type' => 'casino',
                             'posts_per_page' => 3,
-                            'post_status' => 'publish',
-                            'orderby' => 'comment_count',
+                            'orderby' => 'date',
                             'order' => 'DESC',
-                        ));
-                        while ($popular_query->have_posts()) : $popular_query->the_post(); ?>
-                            <li class="tabbed-widget-list-item d-flex mb-3">
-                                <?php if (has_post_thumbnail()) : ?>
-                                    <div class="tabbed-widget-thumb me-2">
-                                        <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-fluid rounded')); ?></a>
+                        );
+                        $recent_query = new WP_Query($recent_args);
+                        if ($recent_query->have_posts()) :
+                            while ($recent_query->have_posts()) : $recent_query->the_post(); ?>
+                                <li class="tabbed-widget-list-item d-flex mb-3">
+                                    <?php if (has_post_thumbnail()) : ?>
+                                        <div class="tabbed-widget-thumb me-2">
+                                            <a href="<?php the_permalink(); ?>"><?php the_post_thumbnail('thumbnail', array('class' => 'img-fluid rounded')); ?></a>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="tabbed-widget-info">
+                                        <a class="tabbed-widget-title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a><br>
+                                        <small class="tabbed-widget-date text-muted"><?php echo get_the_date('F j, Y'); ?></small>
                                     </div>
-                                <?php endif; ?>
-                                <div class="tabbed-widget-info">
-                                    <a class="tabbed-widget-title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a><br>
-                                    <small class="tabbed-widget-date text-muted"><?php echo get_the_date('F j, Y'); ?></small>
-                                </div>
-                            </li>
-                        <?php endwhile; wp_reset_postdata(); ?>
+                                </li>
+                            <?php endwhile; wp_reset_postdata();
+                        else : ?>
+                            <li class="text-muted">No recent casinos found.</li>
+                        <?php endif; ?>
                     </ul>
                 </div>
             </div>
