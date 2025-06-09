@@ -49,7 +49,7 @@ function casinos_shortcode($atts) {
         $output .= '<th class="d-none d-md-table-cell" style="font-weight:600; font-size:1.1em; padding:0.75em 1em; vertical-align: middle;">'
             . '<div style="display:flex;align-items:center;gap:0.5em;">'
             . '<span class="dynamic-col-header">' . esc_html(ucfirst(str_replace('_', ' ', $atts['second_col']))) . '</span>'
-            . '<select class="form-select form-select-sm w-auto ms-2 casino-column-selector" style="min-width:160px; background-color: #34495e; color: #fff; border-color: #566f88;">'
+            . '<select class="form-select form-select-sm w-auto ms-2 casino-column-selector" style="min-width:160px;">'
             . '<option value="loyalty">Loyalty</option>'
             . '<option value="live_casino">Live Casino</option>'
             . '<option value="mobile_casino">Mobile Casino</option>'
@@ -104,13 +104,17 @@ function casinos_shortcode($atts) {
         $output .= '<td class="d-none d-md-table-cell" style="vertical-align:middle; background:#f7f7f7; padding:1.2em 1em;" data-col="' . esc_attr($atts['second_col']) . '">';
         if ($atts['second_col'] == 'games') {
             $games_list = get_post_meta($casino->ID, 'games', true);
-            if (is_array($games_list)) {
+            if (is_array($games_list) && !empty($games_list)) {
+                $games_posts = array_filter(array_map('get_post', $games_list));
+                usort($games_posts, function($a, $b) {
+                    if ($a->post_title === 'Other Games') return 1;
+                    if ($b->post_title === 'Other Games') return -1;
+                    return 0; // Keep original order for other games
+                });
+
                 $output .= '<ul class="list-unstyled mb-0">';
-                foreach ($games_list as $game_id) {
-                    $game = get_post($game_id);
-                    if ($game) {
-                        $output .= '<li style="font-size: 14px;">' . esc_html($game->post_title) . '</li>';
-                    }
+                foreach ($games_posts as $game) {
+                    $output .= '<li style="font-size: 14px;">' . esc_html($game->post_title) . '</li>';
                 }
                 $output .= '</ul>';
             } else {
@@ -207,14 +211,18 @@ function casinos_update_column_ajax() {
     $cells = array();
     foreach ($casinos as $casino) {
         if ($col === 'games') {
-            $games = get_post_meta($casino->ID, 'games', true);
-            if (is_array($games)) {
+            $games_list = get_post_meta($casino->ID, 'games', true);
+            if (is_array($games_list) && !empty($games_list)) {
+                $games_posts = array_filter(array_map('get_post', $games_list));
+                usort($games_posts, function($a, $b) {
+                    if ($a->post_title === 'Other Games') return 1;
+                    if ($b->post_title === 'Other Games') return -1;
+                    return 0; // Keep original order for other games
+                });
+                
                 $cell = '<ul class="list-unstyled mb-0">';
-                foreach ($games as $game_id) {
-                    $game = get_post($game_id);
-                    if ($game) {
-                        $cell .= '<li style="font-size: 14px;">' . esc_html($game->post_title) . '</li>';
-                    }
+                foreach ($games_posts as $game) {
+                    $cell .= '<li style="font-size: 14px;">' . esc_html($game->post_title) . '</li>';
                 }
                 $cell .= '</ul>';
             } else {
