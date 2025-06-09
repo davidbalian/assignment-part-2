@@ -102,9 +102,9 @@ function render_casino_meta_box($post) {
                             foreach ($all_games as $game) {
                                 $checked = is_array($games) && in_array($game->ID, $games) ? 'checked' : '';
                                 echo '<div class="col-12 col-sm-6 col-lg-4">';
-                                echo '<div class="form-check">';
-                                echo '<input class="form-check-input align-middle" type="checkbox" name="games[]" id="game_' . $game->ID . '" value="' . $game->ID . '" ' . $checked . '>';
-                                echo '<label class="form-check-label align-middle" for="game_' . $game->ID . '">' . esc_html($game->post_title) . '</label>';
+                                echo '<div style="display: flex; align-items: center; gap: 0.5em;">';
+                                echo '<input class="align-middle" type="checkbox" name="games[]" id="game_' . $game->ID . '" value="' . $game->ID . '" ' . $checked . '>';
+                                echo '<label class="align-middle" for="game_' . $game->ID . '" style="margin-bottom: 0;">' . esc_html($game->post_title) . '</label>';
                                 echo '</div>';
                                 echo '</div>';
                             }
