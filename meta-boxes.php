@@ -116,18 +116,37 @@ function render_casino_meta_box($post) {
         </div>
         <div class="rating-fields mt-4 p-3 border rounded bg-light">
             <h5 class="mb-3">Rating Components</h5>
+            <div class="row mb-3">
+                <div class="col-md-4 mb-3">
+                    <label for="total_rating" class="form-label fw-bold">Total Rating:</label>
+                    <input type="number" id="total_rating" name="total_rating" value="<?php echo esc_attr(get_post_meta($post->ID, 'total_rating', true)); ?>" min="1" max="10" step="0.1" class="form-control">
+                </div>
+            </div>
             <div class="row">
                 <?php
                 foreach ($rating_fields as $key => $label) {
                     $value = isset($rating[$key]) ? $rating[$key] : '';
                     echo '<div class="col-md-4 mb-3">';
                     echo '<label for="rating_' . $key . '" class="form-label">' . $label . ':</label>';
-                    echo '<input type="number" id="rating_' . $key . '" name="rating[' . $key . ']" value="' . esc_attr($value) . '" min="1" max="10" step="0.1" class="form-control">';
+                    echo '<input type="number" id="rating_' . $key . '" name="rating[' . $key . ']" value="' . esc_attr($value) . '" min="1" max="10" step="0.1" class="form-control rating-component">';
                     echo '</div>';
                 }
                 ?>
             </div>
         </div>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var totalRating = document.getElementById('total_rating');
+            if (totalRating) {
+                totalRating.addEventListener('input', function() {
+                    var value = this.value;
+                    document.querySelectorAll('.rating-component').forEach(function(input) {
+                        input.value = value;
+                    });
+                });
+            }
+        });
+        </script>
     </div>
     <?php
 }
