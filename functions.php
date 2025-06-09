@@ -103,3 +103,9 @@ require get_template_directory() . '/post-types.php';
 require get_template_directory() . '/meta-boxes.php';
 require get_template_directory() . '/shortcodes.php';
 require get_template_directory() . '/widgets.php';
+
+// Enqueue Bootstrap in admin area for meta box styling
+function custom_bootstrap_admin_enqueue() {
+    wp_enqueue_style('bootstrap-admin', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
+}
+add_action('admin_enqueue_scripts', 'custom_bootstrap_admin_enqueue');
