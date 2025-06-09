@@ -109,7 +109,7 @@ function casinos_shortcode($atts) {
                 foreach ($games_list as $game_id) {
                     $game = get_post($game_id);
                     if ($game) {
-                        $output .= '<li>' . esc_html($game->post_title) . '</li>';
+                        $output .= '<li style="font-size: 14px;">' . esc_html($game->post_title) . '</li>';
                     }
                 }
                 $output .= '</ul>';
@@ -213,7 +213,7 @@ function casinos_update_column_ajax() {
                 foreach ($games as $game_id) {
                     $game = get_post($game_id);
                     if ($game) {
-                        $cell .= '<li>' . esc_html($game->post_title) . '</li>';
+                        $cell .= '<li style="font-size: 14px;">' . esc_html($game->post_title) . '</li>';
                     }
                 }
                 $cell .= '</ul>';
