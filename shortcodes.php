@@ -97,7 +97,7 @@ function casinos_shortcode($atts) {
                 }
             }
             $output .= '</div>';
-            $output .= '<span class="rating-value" style="display:block; text-align:left; font-size:1em; color:#444;">' . number_format($rating_out_of_5, 2) . '/5</span>';
+            $output .= '<span class="rating-value" style="display:block; text-align:left; font-size:1em; color:#444;">' . number_format($rating_out_of_5, 1) . '/5</span>';
             $output .= '</div>';
         }
         $output .= '</td>';
@@ -280,7 +280,7 @@ function latest_casinos_shortcode($atts) {
                         $total_rating = get_post_meta(get_the_ID(), 'total_rating', true);
                         if ( $total_rating ) {
                             $rating_out_of_5 = $total_rating / 2;
-                            echo '<div class="rating mb-2" style="text-align:left;">';
+                            echo '<div class="rating-display mb-2">';
                             echo '<div class="stars" style="font-size:1.2em; display:flex; gap:2px; justify-content:flex-start;">';
                             $full_stars = floor($rating_out_of_5);
                             $partial = $rating_out_of_5 - $full_stars;
@@ -297,6 +297,7 @@ function latest_casinos_shortcode($atts) {
                                 }
                             }
                             echo '</div>';
+                            echo '<span class="rating-value text-muted" style="font-size: 0.9em;">' . number_format($rating_out_of_5, 1) . '/5</span>';
                             echo '</div>';
                         }
                         ?>
