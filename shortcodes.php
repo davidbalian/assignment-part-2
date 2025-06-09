@@ -61,14 +61,17 @@ function casinos_shortcode($atts) {
         $second_col_value = get_post_meta($casino->ID, $atts['second_col'], true);
 
         $output .= '<tr>';
-        $output .= '<td>';
+        $output .= '<td style="vertical-align:top; text-align:left;">';
         if ($logo) {
-            $output .= '<a href="' . esc_url($official_site) . '" target="_blank">' . $logo . '</a>';
+            $output .= '<a href="' . esc_url($official_site) . '" target="_blank">'
+                . '<span style="display:inline-block; aspect-ratio:3/2; max-height:124px; width:auto; overflow:hidden; vertical-align:top;">'
+                . preg_replace('/<img /', '<img style="height:124px; max-width:100%; object-fit:cover; aspect-ratio:3/2;" ', $logo)
+                . '</span></a>';
         }
         if ($rating) {
             $rating_out_of_5 = $rating / 2;
-            $output .= '<div class="rating mt-2 text-center">';
-            $output .= '<div class="stars" style="font-size:1.3em; display:flex; gap:2px; justify-content:center;">';
+            $output .= '<div class="rating mt-2" style="text-align:left;">';
+            $output .= '<div class="stars" style="font-size:1.3em; display:flex; gap:2px; justify-content:flex-start;">';
             $full_stars = floor($rating_out_of_5);
             $partial = $rating_out_of_5 - $full_stars;
             for ($i = 0; $i < 5; $i++) {
@@ -84,7 +87,7 @@ function casinos_shortcode($atts) {
                 }
             }
             $output .= '</div>';
-            $output .= '<span class="rating-value">' . number_format($rating_out_of_5, 1) . '/5</span>';
+            $output .= '<span class="rating-value" style="display:block; text-align:left;">' . number_format($rating_out_of_5, 1) . '/5</span>';
             $output .= '</div>';
         }
         $output .= '</td>';
