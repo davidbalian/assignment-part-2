@@ -20,7 +20,7 @@ get_header();
                 
                 <?php if ( has_post_thumbnail() ) : ?>
                     <div class="post-thumbnail mb-4">
-                        <?php the_post_thumbnail('large', ['class' => 'img-fluid rounded']); ?>
+                        <?php the_post_thumbnail('large', ['class' => 'img-fluid rounded', 'style' => 'max-height: 200px; width: 100%; object-fit: cover;']); ?>
                     </div>
                 <?php endif; ?>
 
@@ -62,8 +62,7 @@ get_header();
                         'contact_email' => 'Contact Email',
                         'loyalty' => 'Loyalty Program',
                         'live_casino' => 'Live Casino',
-                        'mobile_casino' => 'Mobile Casino',
-                        'games' => 'Available Games'
+                        'mobile_casino' => 'Mobile Casino'
                     ];
 
                     echo '<h3 class="mt-5">Casino Details</h3>';
@@ -78,13 +77,6 @@ get_header();
                             echo '<td>';
                             if ($key === 'official_site') {
                                 echo '<a href="' . esc_url($value) . '" target="_blank">' . esc_html($value) . '</a>';
-                            } elseif ($key === 'games') {
-                                if (is_array($value)) {
-                                    $game_titles = array_map(function($game_id) {
-                                        return get_the_title($game_id);
-                                    }, $value);
-                                    echo implode(', ', $game_titles);
-                                }
                             } elseif (is_bool($value) || in_array($key, ['loyalty', 'live_casino', 'mobile_casino'])) {
                                 echo $value ? 'Yes' : 'No';
                             } else {
@@ -98,6 +90,19 @@ get_header();
                     echo '</tbody>';
                     echo '</table>';
                     
+                    // Games Section
+                    $games = get_post_meta(get_the_ID(), 'games', true);
+                    if (!empty($games) && is_array($games)) {
+                        echo '<h3 class="mt-5">Available Games</h3>';
+                        echo '<ul class="list-group mt-3">';
+                        foreach ($games as $game_id) {
+                            $game_title = get_the_title($game_id);
+                            if ($game_title) {
+                                echo '<li class="list-group-item">' . esc_html($game_title) . '</li>';
+                            }
+                        }
+                        echo '</ul>';
+                    }
                     ?>
                 </div>
 
