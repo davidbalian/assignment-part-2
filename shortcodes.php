@@ -67,27 +67,24 @@ function casinos_shortcode($atts) {
         }
         if ($rating) {
             $rating_out_of_5 = $rating / 2;
-            $output .= '<div class="rating mt-2">';
-            $output .= '<span class="rating-value">' . number_format($rating_out_of_5, 1) . '/5</span>';
-            $output .= '<div class="stars" style="font-size:1.3em; display:flex; gap:2px;">';
+            $output .= '<div class="rating mt-2 text-center">';
+            $output .= '<div class="stars" style="font-size:1.3em; display:flex; gap:2px; justify-content:center;">';
             $full_stars = floor($rating_out_of_5);
             $partial = $rating_out_of_5 - $full_stars;
             for ($i = 0; $i < 5; $i++) {
                 if ($i < $full_stars) {
-                    // Full star
                     $output .= '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="#ffc107" xmlns="http://www.w3.org/2000/svg"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
                 } elseif ($i == $full_stars && $partial > 0) {
-                    // Partial star
                     $percent = round($partial * 100);
                     $output .= '<span style="position:relative; display:inline-block; width:1em; height:1em;">';
                     $output .= '<svg width="1em" height="1em" viewBox="0 0 24 24" style="position:absolute;top:0;left:0;z-index:1;" fill="#ffc107" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="starGrad' . $casino->ID . $i . '" x1="0" x2="1" y1="0" y2="0"><stop offset="' . $percent . '%" stop-color="#ffc107"/><stop offset="' . $percent . '%" stop-color="#e4e5e9"/></linearGradient></defs><path fill="url(#starGrad' . $casino->ID . $i . ')" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
                     $output .= '</span>';
                 } else {
-                    // Empty star
                     $output .= '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="#e4e5e9" xmlns="http://www.w3.org/2000/svg"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
                 }
             }
             $output .= '</div>';
+            $output .= '<span class="rating-value">' . number_format($rating_out_of_5, 1) . '/5</span>';
             $output .= '</div>';
         }
         $output .= '</td>';
@@ -111,7 +108,7 @@ function casinos_shortcode($atts) {
         $output .= '</td>';
 
         $output .= '<td>';
-        $output .= '<a href="' . esc_url($official_site) . '" class="btn btn-dark" target="_blank"><span style="margin-right:0.4em; vertical-align:middle; display:inline-block;">'
+        $output .= '<a href="' . esc_url($official_site) . '" class="btn btn-dark d-inline-flex align-items-center" target="_blank"><span style="margin-right:0.4em; display:inline-block;">'
             . '<svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>'
             . '</span>Review</a>';
         $output .= '</td>';
