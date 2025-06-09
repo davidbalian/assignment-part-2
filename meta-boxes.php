@@ -56,7 +56,12 @@ function render_casino_meta_box($post) {
     );
 
     ?>
-    <div class="casino-meta-box">
+    <div class="casino-meta-box pt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h5 class="mb-3 border-bottom pb-2">Casino Details</h5>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="mb-3">
@@ -73,29 +78,30 @@ function render_casino_meta_box($post) {
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="mb-3">
-                    <div class="form-check">
+                <div class="mb-4">
+                    <h6 class="mb-2">Features</h6>
+                    <div class="form-check mb-2">
                         <input class="form-check-input" type="checkbox" name="loyalty" id="loyalty" value="1" <?php checked($loyalty, '1'); ?>>
                         <label class="form-check-label" for="loyalty">Loyalty Program</label>
                     </div>
-                    <div class="form-check">
+                    <div class="form-check mb-2">
                         <input class="form-check-input" type="checkbox" name="live_casino" id="live_casino" value="1" <?php checked($live_casino, '1'); ?>>
                         <label class="form-check-label" for="live_casino">Live Casino</label>
                     </div>
-                    <div class="form-check">
+                    <div class="form-check mb-2">
                         <input class="form-check-input" type="checkbox" name="mobile_casino" id="mobile_casino" value="1" <?php checked($mobile_casino, '1'); ?>>
                         <label class="form-check-label" for="mobile_casino">Mobile Casino</label>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Available Games:</label>
+                    <h6 class="mb-2">Available Games</h6>
                     <div class="row g-2">
                         <?php
                         $all_games = get_posts(array('post_type' => 'game', 'posts_per_page' => -1));
                         if ($all_games) {
                             foreach ($all_games as $game) {
                                 $checked = is_array($games) && in_array($game->ID, $games) ? 'checked' : '';
-                                echo '<div class="col-6 col-lg-4">';
+                                echo '<div class="col-12 col-sm-6 col-lg-4">';
                                 echo '<div class="form-check">';
                                 echo '<input class="form-check-input" type="checkbox" name="games[]" id="game_' . $game->ID . '" value="' . $game->ID . '" ' . $checked . '>';
                                 echo '<label class="form-check-label" for="game_' . $game->ID . '">' . esc_html($game->post_title) . '</label>';
