@@ -51,7 +51,7 @@
                                     <?php endif; ?>
                                     <div class="tabbed-widget-info">
                                         <a class="tabbed-widget-title" href="<?php the_permalink(); ?>"><?php the_title(); ?></a><br>
-                                        <small class="tabbed-widget-date text-muted">Total Rating: <?php echo esc_html(get_post_meta(get_the_ID(), 'total_rating', true)); ?></small>
+                                        <small class="tabbed-widget-date text-muted">Total Rating: <?php $tr = get_post_meta(get_the_ID(), 'total_rating', true); echo $tr !== '' ? number_format($tr/2, 1) . '/5' : 'N/A'; ?></small>
                                     </div>
                                 </li>
                             <?php endwhile; wp_reset_postdata();

@@ -66,9 +66,11 @@ function casinos_shortcode($atts) {
             $output .= '<a href="' . esc_url($official_site) . '" target="_blank">' . $logo . '</a>';
         }
         if ($rating) {
+            $rating_out_of_5 = $rating / 2;
             $output .= '<div class="rating mt-2">';
-            $output .= '<span class="rating-value">' . number_format($rating, 1) . '/10</span>';
-            $output .= '<div class="stars">' . str_repeat('★', round($rating)) . str_repeat('☆', 10 - round($rating)) . '</div>';
+            $output .= '<span class="rating-value">' . number_format($rating_out_of_5, 1) . '/5</span>';
+            $stars = round($rating_out_of_5);
+            $output .= '<div class="stars">' . str_repeat('★', $stars) . str_repeat('☆', 5 - $stars) . '</div>';
             $output .= '</div>';
         }
         $output .= '</td>';
