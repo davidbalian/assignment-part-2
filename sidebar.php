@@ -1,4 +1,8 @@
 <aside class="col-md-4 site-sidebar sticky-top sticky-offset">
+    <?php if (is_active_sidebar('sidebar-1')) : ?>
+        <?php dynamic_sidebar('sidebar-1'); ?>
+    <?php endif; ?>
+
     <!-- Read Next Widget -->
     <section class="widget read-next-widget mb-4">
         <div>
