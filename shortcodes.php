@@ -144,7 +144,21 @@ function casinos_shortcode($atts) {
                     var col = this.value;
                     var th = document.getElementById("dynamic-col-header");
                     if (th) th.textContent = col.replace(/_/g, " ").replace(/\b\w/g, function(l){return l.toUpperCase()});
-                    window.location.search = "?second_col=" + col;
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "' . admin_url('admin-ajax.php') . '");
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            var resp = JSON.parse(xhr.responseText);
+                            if (resp.success && resp.data && Array.isArray(resp.data.cells)) {
+                                var tds = document.querySelectorAll("td[data-col]");
+                                tds.forEach(function(td, i) {
+                                    td.innerHTML = resp.data.cells[i] || "";
+                                });
+                            }
+                        }
+                    };
+                    xhr.send("action=casinos_update_column&column=" + encodeURIComponent(col));
                 });
             }
         });
@@ -156,18 +170,42 @@ function casinos_shortcode($atts) {
 add_shortcode('casinos', 'casinos_shortcode');
 
 /**
- * AJAX handler for casino column updates
+ * AJAX handler for updating the second column in the [casinos] table
  */
-function update_casino_column() {
-    check_ajax_referer('update_casino_column', 'nonce');
-    
-    $column = sanitize_text_field($_POST['column']);
-    $title = ucfirst(str_replace('_', ' ', $column));
-    
-    wp_send_json_success(array(
-        'title' => $title,
-        'content' => 'Loading...' // This will be updated via JavaScript
-    ));
-}
-add_action('wp_ajax_update_casino_column', 'update_casino_column');
-add_action('wp_ajax_nopriv_update_casino_column', 'update_casino_column'); 
+add_action('wp_ajax_casinos_update_column', 'casinos_update_column_ajax');
+add_action('wp_ajax_nopriv_casinos_update_column', 'casinos_update_column_ajax');
+function casinos_update_column_ajax() {
+    $col = isset($_POST['column']) ? sanitize_text_field($_POST['column']) : '';
+    $args = array(
+        'post_type' => 'casino',
+        'posts_per_page' => -1
+    );
+    $casinos = get_posts($args);
+    $cells = array();
+    foreach ($casinos as $casino) {
+        if ($col === 'games') {
+            $games = get_post_meta($casino->ID, 'games', true);
+            if (is_array($games)) {
+                $cell = '<ul class="list-unstyled mb-0">';
+                foreach ($games as $game_id) {
+                    $game = get_post($game_id);
+                    if ($game) {
+                        $cell .= '<li>' . esc_html($game->post_title) . '</li>';
+                    }
+                }
+                $cell .= '</ul>';
+            } else {
+                $cell = '';
+            }
+        } else {
+            $val = get_post_meta($casino->ID, $col, true);
+            if ($col === 'contact_email' || $col === 'year_of_establishment') {
+                $cell = esc_html($val);
+            } else {
+                $cell = $val ? 'YES' : 'NO';
+            }
+        }
+        $cells[] = $cell;
+    }
+    wp_send_json_success(['cells' => $cells]);
+} 
